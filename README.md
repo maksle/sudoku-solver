@@ -30,7 +30,7 @@ evil = [
 0,6,0,8,0,0,1,0,0
 ]
 
-solved = sudoku.search(evil2)
+solved = sudoku.search(evil)
 if solved: sudoku.print_solution(solved)
 
 >>>
