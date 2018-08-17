@@ -52,26 +52,15 @@ def consistent(x, val, variables, constraints):
     return all(constraint_satisfied(variables[n], val) for n in constraints[x])
 
 def select_unassigned_variable(variables, constraints, domains):
-    """Minimum remaining values heuristic"""
-    min_dlen, min_v = float('inf'), None
-    for v in variables:
-        if variables[v] is not None: continue
-        d = domains[v]
-        if len(d) < min_dlen:
-            min_dlen = len(d)
-            min_v = v
-    return min_v
+    """minimum remaining values heuristic"""
+    unassigned_vars = (v for v in variables if variables[v] is None)
+    return min(unassigned_vars, key=lambda v: len(domains[v]))
 
-def ordered_vals(variable, domains, constraints):
-    """Least constraining value heuristic"""
+def ordered_vals(variable, domains):
+    """least constraining value heuristic"""
     d = domains[variable]
-    sort_order = []
-    for dv in d:
-        count = 0
-        for n in constraints[variable]:
-            if d in domains[n]: 
-                count += 1
-        sort_order.append(count)
+    sort_order = [sum(1 for n in constraints[variable] if d in domains[n]) 
+                  for dv in d]
     dsort = zip(d, sort_order)
     sorted_domain = [x[0] for x in sorted(dsort, key=itemgetter(1))]
     return sorted_domain
